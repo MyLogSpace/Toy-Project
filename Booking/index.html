@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designed for Luxury</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@100;300;400;500&family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --surface-color: #161616;
+            --point-gold: #c5a059;
+            --text-silver: #e0e0e0;
+            --text-muted: #888888;
+            --transition-slow: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-smooth: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-silver);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 배경 텍스처 */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 네비게이션 */
+        nav {
+            background-color: rgba(13, 13, 13, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 20px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.1);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            color: var(--point-gold);
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-silver);
+            text-decoration: none;
+            margin-left: 35px;
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--point-gold);
+        }
+
+        .btn-login {
+            border: 1px solid var(--point-gold);
+            padding: 8px 20px !important;
+            margin-left: 40px !important;
+        }
+
+        .btn-login:hover {
+            background: var(--point-gold);
+            color: #000 !important;
+        }
+
+        /* 페이지 섹션 시스템 */
+        .page-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            /* 애니메이션 시작 위치 추가 */
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-section.active {
+            display: block;
+            animation: slideUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 메인 히어로 */
+        .hero-visual {
+            position: relative;
+            width: 100%;
+            height: 90vh;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 30%, transparent),
+                url('https://www.hotelscombined.co.kr/rimg/himg/85/1e/82/expedia_group-13078-8a54e8-673022.jpg?width=1200&height=800&crop=true');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 8%;
+        }
+
+        .hero-content {
+            max-width: 650px;
+            z-index: 2;
+        }
+
+        .hero-content .est {
+            color: var(--point-gold);
+            letter-spacing: 6px;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .hero-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1.1;
+            margin-bottom: 30px;
+        }
+
+        .hero-content .hero-desc {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-quick-res {
+            position: absolute;
+            bottom: 60px;
+            left: 8%;
+            display: flex;
+            gap: 30px;
+        }
+
+        .quick-item {
+            border-left: 1px solid var(--point-gold);
+            padding-left: 20px;
+        }
+
+        .quick-item span {
+            display: block;
+            font-size: 10px;
+            color: var(--point-gold);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .quick-item p {
+            font-size: 16px;
+            color: #fff;
+            font-family: 'Cinzel';
+        }
+
+        .more-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            border: 1px solid var(--point-gold);
+            color: var(--point-gold);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            background: transparent;
+            cursor: pointer;
+            font-family: 'Cinzel';
+            transition: 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .more-btn:hover {
+            background: var(--point-gold);
+            color: #111;
+        }
+
+        /* 패키지 섹션 */
+        .package-section {
+            padding: 120px 6%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .package-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .package-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--point-gold);
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .package-card {
+            background: var(--surface-color);
+            border: 1px solid rgba(197, 160, 89, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+            /* overflow: hidden; 보통 이 속성은 카드에 border-radius(둥근 모서리)를 주었을 때 내부 이미지가 튀어나오지 않게 깎아내는 용도 */
+            cursor: pointer;
+        }
+
+        .package-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--point-gold);
+        }
+
+        .package-content {
+            padding: 25px;
+            /* flex-grow: 1; */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 220px;
+        }
+
+        .package-content h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .package-content p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            /* margin-bottom: 20px; */
+        }
+
+        .package-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+
+        .view-more {
+            font-size: 13px;
+            color: var(--point-gold);
+            letter-spacing: 1px;
+        }
+
+        .arrow-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .package-card:hover .arrow-circle {
+            background: var(--point-gold);
+            border-color: var(--point-gold);
+        }
+
+        .package-card:hover .arrow-circle i {
+            color: #000;
+            transform: rotate(-45deg);
+        }
+
+        .package-visual {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .package-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+            transition: 1s;
+        }
+
+        .package-card:hover .package-visual img {
+            filter: brightness(0.9);
+            transform: scale(1.05);
+        }
+
+        /* 공통 서브 페이지 스타일 */
+        .sub-inner {
+            padding: 160px 10% 100px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-family: 'Cinzel';
+            color: var(--point-gold);
+            font-size: 5.5rem;
+        }
+
+        /* [Rooms Page Design] */
+        .sub-container {
+            padding: 180px 6% 120px;
+            max-width: 1500px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .section-header {
+            margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.5rem;
+            font-weight: 500;
+            font-style: italic;
+            color: var(--point-gold);
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .section-header .sub-title {
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            font-size: 13px;
+            color: var(--text-silver);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .section-header .description {
+            color: var(--text-muted);
+            font-family: 'Nanum Myeongjo';
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .room-card {
+            background: #181818;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            text-align: left;
+            transition: var(--transition-slow);
+            overflow: hidden;
+        }
+
+        .room-card:hover {
+            border-color: var(--point-gold);
+            transform: translateY(-10px);
+        }
+
+        .room-image {
+            width: 100%;
+            height: 380px;
+            /* 이미지 강조를 위해 높이 조절 */
+            overflow: hidden;
+            position: relative;
+        }
+
+        .room-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.85);
+            transition: 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .room-card:hover .room-image img {
+            transform: scale(1.1);
+            filter: brightness(1);
+        }
+
+        .room-details {
+            padding: 40px 35px;
+        }
+
+        .room-category {
+            font-family: 'Cinzel';
+            color: var(--point-gold);
+            font-size: 11px;
+            letter-spacing: 3px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .room-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .room-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+        }
+
+        .room-price {
+            font-family: 'Cinzel';
+            font-size: 1.2rem;
+            color: var(--point-gold);
+            margin-bottom: 30px;
+            display: block;
+        }
+
+        .btn-book {
+            background: #181818;
+            display: inline-block;
+            border: 1px solid var(--point-gold);
+            color: var(--point-gold);
+            text-decoration: none;
+            padding: 12px 35px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-family: 'Cinzel';
+            transition: 0.4s;
+        }
+
+        .btn-book:hover {
+            background: var(--point-gold);
+            color: #000;
+        }
+
+        /* 예약 폼 스타일 */
+        .reserve-container {
+            background: var(--surface-color);
+            padding: 40px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            margin: 0 auto;
+            max-width: 800px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            color: var(--point-gold);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: #222;
+            border: 1px solid #333;
+            padding: 15px;
+            color: #fff;
+            outline: none;
+            font-family: 'Noto Sans KR';
+        }
+
+        .form-control:focus {
+            border-color: var(--point-gold);
+        }
+
+        /* 달력 아이콘 색상 변경 (흰색/밝은 색으로 반전) */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(68%) sepia(21%) saturate(854%) hue-rotate(5deg) brightness(92%) contrast(85%);
+            opacity: 0.9;
+            transition: opacity 0.2s ease;
+            /* 검은색 아이콘을 흰색으로 반전시킵니다 */
+            /* filter: invert(100%); */
+            /* 또는 브랜드 색상에 맞춰 약간의 투명도를 줄 수 있습니다 */
+            /* opacity: 0.8; */
+
+        }
+
+        /* 마우스 호버 시 조금 더 밝게 표시 */
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+
+        }
+
+        /* 로케이션 특화 스타일 - 중앙 정렬 */
+        #location-page .sub-inner {
+            max-width: 1200px;
+            text-align: center;
+        }
+
+        .location-map-wrapper {
+            background: var(--surface-color);
+            padding: 20px;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        /* 모달 시스템 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.30);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: none;
+            /* 기본 숨김 */
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-box {
+            background: var(--surface-color);
+            padding: 60px 40px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--point-gold);
+            position: relative;
+            text-align: center;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--point-gold);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        footer {
+            padding: 80px 6%;
+            background: #080808;
+            border-top: 1px solid #1a1a1a;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-info h4 {
+            font-family: 'Cinzel';
+            color: var(--point-gold);
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 2;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1200px) {
+            .rooms-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .package-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .rooms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .package-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links a {
+                display: none;
+            }
+
+            .nav-links a.btn-login {
+                display: block;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="bg-overlay"></div>
+    <nav>
+        <div class="logo" onclick="changePage('main-page')">ST. HANA'S</div>
+        <div class="nav-links">
+            <a onclick="changePage('about-page')">ABOUT</a>
+            <a onclick="changePage('rooms-page')">ROOMS</a>
+            <a onclick="changePage('reserve-page')">RESERVE</a>
+            <a onclick="changePage('location-page')">LOCATION</a>
+            <a onclick="alert('준비중입니다')">FACILITIES</a>
+            <a onclick="toggleLogin(true)" class="btn-login">SIGN IN</a>
+        </div>
+    </nav>
+</body>
+
+<!-- [메인 페이지] -->
+<section id="main-page" class="page-section active">
+    <div class="hero-visual">
+        <div class="hero-content">
+            <p class="est">THE PEAK OF PRIVATE LUXURY</p>
+            <h2>A Lavish Experience</h2>
+            <p class="hero-desc">Beyond Everything. St. Hana's Heritage.</p>
+            <a class="more-btn" onclick="changePage('reserve-page')">RESERVE NOW</a>
+        </div>
+
+        <div class="hero-quick-res">
+            <div class="quick-item"><span>LOCATION</span>
+                <p>SEOUL, KR</p>
+            </div>
+            <div class="quick-item"><span>SERVICE</span>
+                <p>PRIVATE STAY</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="package-section">
+        <div class="package-header">
+            <h3>Experience unparalleled luxury</h3>
+            <p class="package-sub-title">For Those Who Seek the Extraordinary</p>
+        </div>
+
+        <div class="package-grid">
+            <!-- 패키지 1 -->
+            <div class="package-card" onclick="changePage('reserve-page')">
+                <div class="package-content">
+                    <div>
+                        <h4>For Our Family Night</h4>
+                        <p>조식 + 수영장 + 파자마 기프트<br>(성인 2인 + 어린이 1인 기준)<br><br>350,000 ~</p>
+                    </div>
+                    <div class="package-footer">
+                        <span class="view-more">VIEW MORE</span>
+                        <div class="arrow-circle"><i class="fa-solid fa-arrow-right"></i></div>
+                    </div>
+                </div>
+                <div class="package-visual">
+                    <img src="https://aw-d.tripcdn.com/images/1mc6y12000kwb3y0i31F1_R_960_660_R5_D.jpg"
+                        alt="Family Night">
+                </div>
+            </div>
+
+            <!-- 패키지 2 -->
+            <div class="package-card" onclick="changePage('reserve-page')">
+                <div class="package-content">
+                    <div>
+                        <h4>Whiskey & Velvet Nights</h4>
+                        <p>조니워커 블랙 2잔 + 바닐라 크림 브륄레 + 1시간 레이트체크아웃 <br><br>250,000 ~</p>
+                    </div>
+                    <div class="package-footer">
+                        <span class="view-more">VIEW MORE</span>
+                        <div class="arrow-circle"><i class="fa-solid fa-arrow-right"></i></div>
+                    </div>
+                </div>
+                <div class="package-visual">
+                    <img src="https://alcoholpleasehk.com/cdn/shop/articles/johnnie-walker-black-cask-5315206.jpg?v=1772489900&width=1100"
+                        alt="Whiskey Night">
+                </div>
+            </div>
+
+            <!-- 패키지 3 -->
+            <div class="package-card" onclick="changePage('reserve-page')">
+                <div class="package-content">
+                    <div>
+                        <h4>Sunset Dinner</h4>
+                        <p>석식 2인 + 페어링 와인 + 사우나 + 1시간 레이트 체크아웃<br><br>450,000 ~</p>
+                    </div>
+                    <div class="package-footer">
+                        <span class="view-more">VIEW MORE</span>
+                        <div class="arrow-circle"><i class="fa-solid fa-arrow-right"></i></div>
+                    </div>
+                </div>
+                <div class="package-visual">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=800"
+                        alt="Sunset Dinner">
+                </div>
+            </div>
+
+            <!-- 패키지 4 -->
+            <div class="package-card" onclick="changePage('reserve-page')">
+                <div class="package-content">
+                    <div>
+                        <h4>Sweet & Yacht</h4>
+                        <p>스위트 객실 2박 + 조식 + 사우나 + 요트 체험<br><br>550,000 ~</p>
+                    </div>
+                    <div class="package-footer">
+                        <span class="view-more">VIEW MORE</span>
+                        <div class="arrow-circle"><i class="fa-solid fa-arrow-right"></i></div>
+                    </div>
+                </div>
+                <div class="package-visual">
+                    <img src="https://img.insight.co.kr/static/2020/02/11/700/g23ce27d4p7l18qtbc51.jpg"
+                        alt="Sweet & Yacht">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- [About 페이지] -->
+<section id="about-page" class="page-section">
+    <div class="sub-inner">
+        <div class="section-header">
+            <h2>The Spirit of Welcome</h2>
+        </div>
+        <p style="font-family: 'Nanum Myeongjo'; line-height: 2.5; font-size: 1.1rem; text-align: center; color: #ccc;">
+            This is a place where your first visit feels like a homecoming,<br>
+            and the first glimpse stirs something deep within. <br><br>
+            When you step inside, you'll find that this recognition is mutual.<br>
+            It’s your drink the way you like it and the best seat by the fire.<br>
+            Everything is ready, exactly as you wished.<br>
+            Welcome to your private sanctuary, St. Hana’s.
+        </p>
+        <div style="text-align: center; margin-top: 50px;">
+            <button class="more-btn" onclick="changePage('main-page')">BACK TO HOME</button>
+        </div>
+    </div>
+</section>
+
+<!-- 독립된 ROOMS 페이지 (이미지 스타일 적용) -->
+<section id="rooms-page" class="page-section">
+    <div class="sub-container">
+        <div class="section-header">
+            <h2 onclick="changePage('rooms-page')" style="cursor:pointer">Rooms & Suites</h2>
+            <!-- <span class="sub-title"></span> -->
+            <p class="description">Our palatial suites extend over two exquisitely detailed floors, connected by grand
+                staircases. Inspiring and <br>intimate in equal measure.</p>
+        </div>
+
+        <div class="rooms-grid">
+            <!-- 룸 1 -->
+            <div class="room-card">
+                <div class="room-image">
+                    <img src="https://cdn.jumeirah.com/api/public/content/472828a01aa14199aa887b7a81f19fcc?v=c37c0b68">
+                </div>
+                <div class="room-details">
+                    <h3 class="room-title">Duplex One Bedroom Suite</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">City View | 45sqm | King Bed</p>
+                    <span class="room-price">770,000 KRW ~</span>
+                    <!-- 수정 포인트: onclick 이벤트 추가 -->
+                    <button onclick="openreserve('Duplex One Bedroom Suite')" class="btn-book">BOOK NOW</button>
+                </div>
+            </div>
+
+            <!-- 룸 2 -->
+            <div class="room-card">
+                <div class="room-image">
+                    <img src="https://cdn.jumeirah.com/api/public/content/9c3bd946709346ecbb7cc5b0a9b79ec3?v=acdf2ed8">
+                </div>
+                <div class="room-details">
+                    <h3 class="room-title">Duplex Sky One Bedroom Suite</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">River View | 82sqm | Separate Living</p>
+                    <span class="room-price">770,000 KRW ~</span>
+                    <button onclick="openreserve('Duplex Sky One Bedroom Suite')" class="btn-book">BOOK NOW</button>
+                </div>
+            </div>
+
+            <!-- 룸 3 -->
+            <div class="room-card">
+                <div class="room-image">
+                    <img src="https://cdn.jumeirah.com/api/public/content/22e9946cd7214b8c906c6bcbf5c3f494?v=835f31af">
+                </div>
+                <div class="room-details">
+                    <h3 class="room-title">Duplex Panoramic Site</h3>
+                    <p style="color:var(--text-muted); margin-bottom:15px;">Full Ocean View | 55sqm | Balcony</p>
+                    <span class="room-price">1,000,000 KRW ~</span>
+                    <button onclick="openreserve('Duplex Panoramic Site')" class="btn-book">BOOK NOW</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- [예약 전용 페이지] -->
+<section id="reserve-page" class="page-section">
+    <div class="sub-inner">
+        <div class="section-header">
+            <h2>Reserve</h2>
+            <p style="color: #666; margin-top: 15px;">세상에서 가장 고요한 시간이 당신을 기다립니다.</p>
+        </div>
+
+        <div class="reserve-container">
+            <div class="form-group">
+                <label>SELECT SANCTUARY</label>
+                <select id="res-space" class="form-control">
+                    <option value="For Our Family Night">For Our Family Night (SPECIAL OFFERS)</option>
+                    <option value="Whiskey & Velvet Night">Whiskey & Velvet Night (SPECIAL OFFERS)</option>
+                    <option value="Sunset Dinner">Sunset Dinner (SPECIAL OFFERS)</option>
+                    <option value="Sweet & Yacht">Sweet & Yacht (SPECIAL OFFERS)</option>
+                    <option value="Duplex One Bedroom Suite">Duplex One Bedroom Suite</option>
+                    <option value="Duplex Sky One Bedroom Suite">Duplex Sky One Bedroom Suite</option>
+                    <option value="Duplex Panoramic Site">Duplex Panoramic Site</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>DATE OF ARRIVAL</label>
+                <input type="date" id="res-date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>YOUR NAME</label>
+                <input type="text" id="res-name" class="form-control" placeholder="성함을 입력해 주세요">
+            </div>
+
+            <button class="more-btn" onclick="validatereserve()" style="width: 100%;">
+                CONFIRM reserve
+            </button>
+
+            <div id="res-success-container" style="display: none; margin-top: 40px;">
+                <h3
+                    style="color: var(--point-gold); font-size: 1rem; margin-bottom: 20px; border-bottom: 1px solid rgba(197,160,89,0.3); padding-bottom: 10px; text-align: left;">
+                    Upcoming Visits</h3>
+                <div id="res-list"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- [위치 페이지] - 중앙 정렬 수정 -->
+<section id="location-page" class="page-section">
+    <div class="sub-inner">
+        <div class="section-header">
+            <h2>Our Atelier</h2>
+            <p style="color: #666; margin-top: 15px;">SEOUL, REPUBLIC OF KOREA</p>
+        </div>
+
+        <div class="location-map-wrapper">
+            <div style="height: 500px; width: 100%;">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3165.952912444584!2d126.921389!3d37.481111!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x357ca00000000001%3A0x0000000000000000!2sSillim-dong!5e0!3m2!1sen!2skr!4v1700000000000"
+                    width="100%" height="100%" style="border:0; filter: grayscale(1) invert(0.92) brightness(0.85);"
+                    allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            <div style="margin-top: 30px; text-align: center; color: var(--text-muted); font-size: 14px;">
+                <p><i class="fa-solid fa-location-dot" style="color: var(--point-gold); margin-right: 10px;"></i>서울특별시
+                    관악구 신림동 123-45</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 로그인 모달 -->
+<div class="modal-overlay" id="login-modal">
+    <div class="modal-box">
+        <button class="close-modal" onclick="toggleLogin(false)">&times;</button>
+        <h2 style="font-family: 'Cinzel'; color: var(--point-gold); margin-bottom: 50px; letter-spacing: 5px;">SIGN
+            IN</h2>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="ID" style="text-align: center;">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" placeholder="PASSWORD" style="text-align: center;">
+        </div>
+        <button class="more-btn"
+            style="width: 100%; margin-top: 20px; background: var(--point-gold); color: #000;">ACCESS</button>
+    </div>
+</div>
+
+<!-- 패키지 예약 모달 -->
+<div class="modal-overlay" id="reserveModal">
+    <div class="modal-box">
+        <button class="close-modal" onclick="closereserve()">&times;</button>
+        <h2 style="font-family: 'Cinzel'; color: var(--point-gold); text-align: center; margin-bottom: 30px;">
+            BOOKING</h2>
+        <form onsubmit="event.preventDefault(); alert('예약 신청이 완료되었습니다.'); closereserve();">
+            <div class="form-group">
+                <label>PACKAGE</label>
+                <input type="text" id="selectedPackage" class="form-control" readonly
+                    style="border-color: var(--point-gold); color: var(--point-gold);">
+            </div>
+            <div class="form-group">
+                <label>GUEST NAME</label>
+                <input type="text" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>DATE</label>
+                <input type="date" class="form-control" required>
+            </div>
+            <button type="submit" class="more-btn"
+                style="width: 100%; background: var(--point-gold); color: #000;">CONFIRM</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-grid">
+        <div class="footer-info">
+            <h4>ST. HANA'S</h4>
+            <p>우리는 당신의 가장 사적인 시간을 디자인합니다.</p>
+        </div>
+        <div class="footer-info">
+            <h4>CONTACT</h4>
+            <p>T. +82 2 1234 5678</p>
+            <p>E. concierge@sthana.com</p>
+        </div>
+        <div class="footer-info">
+            <h4>LEGAL</h4>
+            <p>Terms of Use</p>
+            <p>Privacy Policy</p>
+        </div>
+    </div>
+    <p style="text-align: center; font-size: 0.8rem; color: #444; letter-spacing: 2px;">
+        &copy; 2026 ST. HANA'S PRIVATE SANCTUARY.
+    </p>
+</footer>
+<script>
+    // 페이지 전환
+    function changePage(pageId) {
+        const sections = document.querySelectorAll('.page-section');
+        sections.forEach(s => s.classList.remove('active'));
+
+        const target = document.getElementById(pageId);
+        if (target) {
+            target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+
+    // 로그인 모달 토글 (이 부분이 없어서 작동하지 않았습니다)
+    function toggleLogin(show) {
+        const loginModal = document.getElementById('login-modal');
+        if (show) {
+            loginModal.style.display = 'flex';
+            setTimeout(() => loginModal.classList.add('active'), 10);
+            document.body.style.overflow = 'hidden';
+        } else {
+            loginModal.classList.remove('active');
+            setTimeout(() => loginModal.style.display = 'none', 400);
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    // 패키지 예약 모달
+    function openreserve(packageName) {
+        const modal = document.getElementById('reserveModal');
+        document.getElementById('selectedPackage').value = packageName;
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closereserve() {
+        const modal = document.getElementById('reserveModal');
+        modal.classList.remove('active');
+        setTimeout(() => modal.style.display = 'none', 400);
+        document.body.style.overflow = 'auto';
+    }
+
+    // 예약 데이터 처리
+    let reserves = [];
+
+    function validatereserve() {
+        const name = document.getElementById('res-name').value;
+        const date = document.getElementById('res-date').value;
+        const space = document.getElementById('res-space').value;
+
+        if (!name || !date) {
+            alert("성함과 날짜를 모두 입력해주세요.");
+            return;
+        }
+
+        reserves.push({ name, date, space });
+        renderreserves();
+        document.getElementById('res-success-container').style.display = 'block';
+        alert(`${name}님, 예약 신청이 완료되었습니다.`);
+        document.getElementById('res-name').value = "";
+    }
+
+    function renderreserves() {
+        const list = document.getElementById('res-list');
+        list.innerHTML = reserves.map((res, i) => `
+                <div style="padding: 15px; border: 1px solid #333; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+                    <div style="font-size: 13px;">
+                        <span style="color: var(--point-gold)">${res.space}</span><br>
+                        <strong>${res.name}</strong> | ${res.date}
+                    </div>
+                    <button onclick="deleteRes(${i})" style="background: none; border: 1px solid #444; color: #888; padding: 5px 10px; cursor: pointer; font-size: 11px;">취소</button>
+                </div>
+            `).join('');
+    }
+
+    function deleteRes(index) {
+        reserves.splice(index, 1);
+        if (reserves.length === 0) document.getElementById('res-success-container').style.display = 'none';
+        renderreserves();
+    }
+
+    // 바깥 클릭 시 닫기
+    window.onclick = function (event) {
+        const loginModal = document.getElementById('login-modal');
+        const reserveModal = document.getElementById('reserveModal');
+        if (event.target == loginModal) toggleLogin(false);
+        if (event.target == reserveModal) closereserve();
+    }
+
+</script>
+
+</html>
