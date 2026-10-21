@@ -1,4 +1,0 @@
-python-dotenv
-gspread
-google-auth
-schedule
