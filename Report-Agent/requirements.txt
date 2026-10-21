@@ -1,8 +1,0 @@
-# 목업(MOCK_MODE=True) 모드는 표준 라이브러리만으로 동작하며 별도 설치가 필요 없습니다.
-# 아래는 MOCK_MODE=False로 전환해 실제 API 연동을 붙일 때 필요한 패키지입니다.
-
-gspread>=6.0.0          # Google Sheets 연동
-google-auth>=2.28.0      # Google 서비스 계정 인증
-openai>=1.14.0            # OpenAI API
-langchain-openai>=0.1.0   # LangChain 기반 프롬프트 체인
-requests>=2.31.0          # Slack Webhook 호출
