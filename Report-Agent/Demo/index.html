@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>사내 보고서 생성 에이전트 - 데모</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f7f9;--surface:#fff;--text:#222;--muted:#667;--line:#E1E4E8;--accent:#3E617A;--accent-fg:#fff;--term:#14212b;--term-fg:#cfe3f0;--warn:#e0a030;--err:#e5655f;--ok:#5fc08a;--btn2:#eee;--btn2-fg:#555;--errbg:#fdecea}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#12181d;--surface:#1b242b;--text:#e6edf2;--muted:#93a4b1;--line:#2c3943;--accent:#6f9bb9;--accent-fg:#0d1418;--term:#0b1116;--btn2:#2a353d;--btn2-fg:#c8d3db;--errbg:#3a2220}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;padding:24px 16px}
+.wrap{max-width:720px;margin:0 auto}
+h1{font-size:18px;margin:0 0 4px;color:var(--accent)}
+.sub{font-size:13px;color:var(--muted);margin:0 0 16px}
+.steps{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.step{flex:1;min-width:90px;font-size:12px;padding:8px;border-radius:6px;background:var(--surface);border:1px solid var(--line);color:var(--muted);text-align:center}
+.step.active{border-color:var(--accent);color:var(--accent);font-weight:600}
+.step.done{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.step.fail{border-color:var(--err);color:var(--err)}
+.term{background:var(--term);color:var(--term-fg);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.6;border-radius:8px;padding:12px;height:170px;overflow:auto;margin-bottom:12px;white-space:pre-wrap}
+.term .w{color:var(--warn)}.term .e{color:var(--err)}.term .o{color:var(--ok)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin-bottom:12px;display:none}
+.panel h2{font-size:12px;margin:0 0 10px;color:var(--muted);font-weight:600}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:460px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:600}
+tr.bad td{background:var(--errbg);color:var(--err)}
+.draft{white-space:pre-wrap;font-size:13px;line-height:1.6;margin:0;font-family:inherit;min-height:60px}
+.caret{display:inline-block;width:7px;height:14px;background:var(--accent);vertical-align:-2px;animation:b 1s steps(1) infinite}
+@keyframes b{50%{opacity:0}}
+.card{max-width:480px;margin:0 auto 12px;background:var(--surface);border-radius:8px;border:1px solid var(--line);padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.08);display:none}
+.card h2{font-size:16px;color:var(--accent);margin:0 0 12px}
+.card pre{white-space:pre-wrap;font-size:13px;line-height:1.6;margin:0;font-family:inherit}
+.btns{margin-top:16px}
+button{padding:8px 16px;border-radius:6px;border:none;font-size:13px;margin-right:8px;cursor:pointer}
+.approve,.run{background:var(--accent);color:var(--accent-fg)}
+.reject{background:var(--btn2);color:var(--btn2-fg)}
+.run{display:block;margin:0 auto 12px;padding:10px 24px;font-size:14px}
+.note{font-size:12px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>사내 보고서 생성 에이전트</h1>
+  <p class="sub">MOCK_MODE 실행 흐름 미리보기 · 데이터 검증부터 초안 작성, 승인/반려까지 눌러보세요</p>
+  <div class="steps" id="steps">
+    <div class="step">1 데이터 로드</div><div class="step">2 검증</div><div class="step">3 초안 생성</div><div class="step">4 승인</div><div class="step">5 발송</div>
+  </div>
+  <div class="term" id="term">$ python src/main.py</div>
+  <div class="panel" id="dataPanel">
+    <h2>원본 데이터 (data/sample_report_data.csv) · 필수 항목(담당자·업무유형·업무내용) 누락 행은 검증에서 분리</h2>
+    <div class="scroll"><table><thead><tr><th>#</th><th>담당자</th><th>업무유형</th><th>업무내용</th><th>처리건수</th><th>처리상태</th></tr></thead><tbody id="tb"></tbody></table></div>
+  </div>
+  <div class="panel" id="draftPanel">
+    <h2>AI 초안 생성 (report_generator) · 정상 데이터를 업무유형별·처리상태별로 집계</h2>
+    <pre class="draft" id="draft"></pre>
+  </div>
+  <div class="card" id="card">
+    <h2>사내 보고서 생성 에이전트 - 승인 요청</h2>
+    <pre id="rep"></pre>
+    <div class="btns"><button class="approve" id="ap">승인</button><button class="reject" id="rj">반려</button></div>
+  </div>
+  <button class="run" id="run">실행 시작</button>
+  <p class="note">실제 코드의 로그·검증·승인 흐름(반려 시 최대 2회 재작성)을 재현한 시뮬레이션입니다. 목업 모드에서는 LLM 대신 템플릿으로 초안을 만듭니다.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const ROWS=[
+["김지수","인사","신규 입사자 서류 확인","4","완료"],
+["박서연","회계","법인카드 지출 증빙 대사","12","완료"],
+["이도윤","전자결재","휴가 신청서 승인","9","완료"],
+["정하늘","회계","세금계산서 대사","","진행중"],
+["김지수","인사","연차 잔여일수 정리","7","완료"],
+["박서연","","카드사 대사표 취합","5","진행중"],
+["이도윤","전자결재","지출결의서 검토","6","완료"],
+["정하늘","회계","거래처 대금 지급 확인","3","완료"]];
+function validate(){const ok=[],bad=[];ROWS.forEach((r,i)=>{const e=[];["담당자","업무유형","업무내용"].forEach((f,k)=>{if(!r[k].trim())e.push("'"+f+"' 항목 누락")});if(r[3]&&!/^\d+$/.test(r[3]))e.push("'처리건수' 값이 숫자가 아님");e.length?bad.push({i:i+1,e}):ok.push(r)});return{ok,bad}}
+function count(rows,k){const m=new Map();rows.forEach(r=>m.set(r[k],(m.get(r[k])||0)+1));return m}
+function buildReport(ok,bad){
+  const L=["[경영지원팀 주간 업무 보고서 - 2026-09-03]","","이번 주 총 처리 업무: "+ok.length+"건 (검증 제외 "+bad.length+"건)","","- 업무유형별 현황"];
+  count(ok,1).forEach((n,k)=>L.push("  · "+(k||"(미분류)")+": "+n+"건"));
+  L.push("","- 처리상태별 현황");
+  count(ok,4).forEach((n,k)=>L.push("  · "+(k||"(미기재)")+": "+n+"건"));
+  if(bad.length){L.push("","- 데이터 검증 이슈 (담당자 확인 필요)");bad.forEach(b=>L.push("  · "+b.i+"행: "+b.e.join(", ")))}
+  return L.join("\n")}
+let pending=null,REPORT="";
+const ts=()=>new Date().toTimeString().slice(0,8);
+function log(m,c){const t=$("term"),d=document.createElement("div");if(c)d.className=c;d.textContent=ts()+" "+m;t.appendChild(d);t.scrollTop=t.scrollHeight}
+function setStep(i,s){[...$("steps").children].forEach((e,k)=>{e.className="step"+(k<i?" done":k===i?" "+s:"")})}
+async function typeDraft(text){const el=$("draft");$("draftPanel").style.display="block";el.textContent="";for(let i=0;i<text.length;i+=3){el.innerHTML="";el.append(text.slice(0,i+3));const c=document.createElement("span");c.className="caret";el.append(c);await sleep(18)}el.textContent=text}
+function ask(){$("rep").textContent=REPORT;$("card").style.display="block";setStep(3,"active");log("[INFO] 승인 요청 카드 생성됨: approval_ui/preview_card.html");return new Promise(r=>pending=r)}
+$("ap").onclick=()=>pending&&(pending(true),pending=null);
+$("rj").onclick=()=>pending&&(pending(false),pending=null);
+$("run").onclick=async()=>{
+  $("run").disabled=true;$("term").innerHTML="";["card","draftPanel","dataPanel"].forEach(i=>$(i).style.display="none");
+  log("[INFO] === 사내 보고서 생성 에이전트 실행 시작 ===");log("[INFO] 실행 모드: MOCK");
+  setStep(0,"active");await sleep(500);
+  $("tb").innerHTML=ROWS.map((r,i)=>"<tr><td>"+(i+1)+"</td><td>"+r.slice(0,3).map(x=>x||"—").join("</td><td>")+"</td><td>"+(r[3]||"—")+"</td><td>"+r[4]+"</td></tr>").join("");
+  $("dataPanel").style.display="block";log("[INFO] 원본 데이터 "+ROWS.length+"건 로드 완료");
+  setStep(1,"active");await sleep(800);
+  const {ok,bad}=validate();
+  [...$("tb").children].forEach((tr,i)=>{if(bad.some(b=>b.i===i+1))tr.className="bad"});
+  log("[INFO] 검증 완료 - 정상 "+ok.length+"건 / 오류 "+bad.length+"건");
+  bad.forEach(b=>log("[WARNING] 검증 오류 "+b.i+"행: "+JSON.stringify(b.e),"w"));
+  REPORT=buildReport(ok,bad);
+  setStep(2,"active");log("[INFO] 보고서 초안 생성 중...");await typeDraft(REPORT);log("[INFO] 보고서 초안 생성 완료");
+  let res=await ask();$("card").style.display="none";log("[INFO] 승인 결과: "+(res?"승인":"반려"));
+  let n=0;
+  while(!res&&n<2){n++;log("[INFO] 반려됨 - 보고서 재작성 시도 "+n+"/2");setStep(2,"active");log("[INFO] 보고서 초안 생성 중...");await typeDraft(REPORT);log("[INFO] 보고서 초안 생성 완료");res=await ask();$("card").style.display="none";log("[INFO] 승인 결과: "+(res?"승인":"반려"))}
+  if(!res){setStep(3,"fail");log("[ERROR] [실패 알림] 승인 재시도 초과 - 담당자 직접 확인 필요","e");log("[관리자 알림 - 목업] 자동화 실패","e")}
+  else{setStep(4,"active");await sleep(600);log("[INFO] [발송 완료 - 목업] 최종 보고서 저장: outputs/report_20260903_101500.txt","o");log("[INFO] [발송 완료 - 목업] 수신자: hr-team@example.com (실제 발송 없음)","o");log("[INFO] === 실행 완료 ===","o");setStep(5,"done")}
+  $("run").disabled=false;$("run").textContent="다시 실행";
+};
+</script>
+</body>
+</html>
